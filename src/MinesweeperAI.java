@@ -41,6 +41,8 @@ public class MinesweeperAI {
         markKnownMines();
     }
 
+    // TODO add check to see if adjacent minecount has been flagged in adjacent squares
+    // thus setting a square to 0 risk, so that the rest around it can be clicked.
     private void scoreUsingAdjacent(int i, int j) {
         for (int k = i - 1; k <= i + 1; k++) {
             for (int l = j - 1; l <= j + 1; l++) {
