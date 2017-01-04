@@ -49,20 +49,11 @@ public class MinesweeperAI {
                     if (!gameGrid[k][l].isClicked()) {
                         gameGridRisk[i][j]++;
                     } else {
-                        switch (gameGrid[k][l].adjacentMineCount) {
-                            case 0:
-                                gameGridRisk[i][j] = 0;
-                                return;
-                            case 1:
-                            case 2:
-                            case 3:
-                            case 4:
-                            case 5:
-                            case 6:
-                            case 7:
-                            case 8:
-                                gameGridRisk[i][j]++;
-                                break;
+                        if (gameGrid[k][l].adjacentMineCount == 0) {
+                            gameGridRisk[i][j] = 0;
+                            return;
+                        } else {
+                            gameGridRisk[i][j]++;
                         }
                     }
                 }
@@ -105,7 +96,7 @@ public class MinesweeperAI {
         for (int k = i - 1; k <= i + 1; k++) {
             for (int l = j - 1; l <= j + 1; l++) {
                 if (GamePanel.withinXIndex(l) && GamePanel.withinYIndex(k)) {
-                    if (!gameGrid[k][l].isClicked() && !gameGrid[k][l].isFlagged()) {
+                    if (!gameGrid[k][l].isClicked()) {
                         spaces.add(new int[]{k, l});
                     }
                 }
