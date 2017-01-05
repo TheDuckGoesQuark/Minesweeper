@@ -24,7 +24,6 @@ public class MinesweeperAI {
                 currentSquare.artificialClick();
                 assessBoard();
                 chooseNextMove();
-                printRiskGrid();
             }
         }
     }
@@ -46,12 +45,15 @@ public class MinesweeperAI {
     private void scoreUsingAdjacent(int i, int j) {
         for (int k = i - 1; k <= i + 1; k++) {
             for (int l = j - 1; l <= j + 1; l++) {
+                if(k == i && l == j) {
+                    continue;
+                }
                 if (GamePanel.withinXIndex(l) && GamePanel.withinYIndex(k)) {
                     // Confirms AI should be able to see square, assumes risk otherwise
                     if (!gameGrid[k][l].isClicked()) {
                         gameGridRisk[i][j]++;
                     } else {
-                        if (gameGrid[k][l].adjacentMineCount == 0) {
+                        if (gameGrid[k][l].adjacentMineCount == 0 || adjacentMinesMarked(k,l)) {
                             gameGridRisk[i][j] = 0;
                             return;
                         } else {
@@ -63,6 +65,21 @@ public class MinesweeperAI {
         }
     }
 
+    private boolean adjacentMinesMarked(int i, int j) {
+        int flaggedCount = 0;
+        for (int k = i-1; k <= i + 1; k++) {
+            for (int l = j-1; l <= j + 1; l++) {
+                if((k == i && l == j) || !GamePanel.withinYIndex(k) || !GamePanel.withinXIndex(l)) {
+                    continue;
+                }
+                if(gameGrid[k][l].isFlagged()) {
+                    flaggedCount++;
+                }
+            }
+        }
+        return flaggedCount == gameGrid[i][j].getAdjacentMineCount();
+    }
+
     //TODO make grid iterator cause these for loops are disgusting
     private void markKnownMines() {
         // find 1s
@@ -70,7 +87,7 @@ public class MinesweeperAI {
         // if so, flag
         // find 2s
         // ...
-        int adjacentCount = 1;
+        for(int adjacentCount = 1; adjacentCount <= 8; adjacentCount++)
         for (int i = 0; i < gameGrid.length; i++) {
             for (int j = 0; j < gameGrid[0].length; j++) {
                 if (!gameGrid[i][j].isClicked()) {
@@ -89,7 +106,9 @@ public class MinesweeperAI {
     private void flagSpaces(ArrayList<int[]> spaces) {
         for (int i = 0; i < spaces.size(); i++) {
             int[] index = spaces.get(i);
-            gameGrid[index[0]][index[1]].artificialFlag();
+            if(!gameGrid[index[0]][index[1]].isFlagged()) {
+                gameGrid[index[0]][index[1]].artificialFlag();
+            }
         }
     }
 
@@ -121,20 +140,6 @@ public class MinesweeperAI {
                 }
             }
             minRisk++;
-        }
-    }
-
-    private void printRiskGrid() {
-        System.out.println("");
-        for (int i = 0; i < gameGridRisk.length; i++) {
-            System.out.println("");
-            for (int j = 0; j < gameGridRisk[0].length; j++) {
-                if (gameGrid[i][j].isClicked()) {
-                    System.out.print("# ");
-                } else {
-                    System.out.print(gameGridRisk[i][j] + " ");
-                }
-            }
         }
     }
 }
